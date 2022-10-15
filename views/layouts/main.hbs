@@ -2,9 +2,31 @@
   <head>
     <meta charset="UTF-8" />
     <title>Hello</title>
+    <link rel="stylesheet" href="/style.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/spectre.css/dist/spectre.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css"
+    />
+
   </head>
   <body>
-    <h1>My Website</h1>
+    <header class="navbar">
+      <section class="navbar-section">
+        <a href="/" class="navbar-brand mr-2">Kajsa Andersson</a>
+        <a href="/projects" class="btn btn-link">Projects</a>
+        <a href="/about" class="btn btn-link">About me</a>
+        <a href="/contact" class="btn btn-link">Contact</a>
+      </section>
+    </header>
     {{{body}}}
   </body>
 </html>
