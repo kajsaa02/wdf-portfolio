@@ -1,0 +1,32 @@
+<h1>Create Project</h1>
+
+{{#if errorMessages.length}}
+	<p>Couldn't create projcet due to:</p>
+	<ul>
+		{{#each errorMessages}}
+			<li>{{this}}</li>
+		{{/each}}
+	</ul>
+{{/if}}
+
+<form action="/projects/create" method="post">
+	
+	<div>
+		Name: <input type="text" name="name" value="{{name}}">
+	</div>
+	
+	<div>
+		Description: <input type="text" name="description" value="{{description}}">
+	</div>
+
+    <div>
+		Description full: <input type="text" name="description_full" value="{{description_full}}">
+	</div>
+
+	<div>
+		Description full: <input type="text" name="html_link" value="{{html_link}}">
+	</div>
+	
+	<input type="submit" value="Create now">
+	
+</form>
