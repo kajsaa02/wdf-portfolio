@@ -403,9 +403,9 @@ app.post("/faq", function (request, response) {
 });
 
 app.get("/adminpage", function (request, response) {
-  const query = `SELECT * FROM Projects`;
+  const projQuery = `SELECT * FROM Projects`;
 
-  db.all(query, function (error, projects) {
+  db.all(projQuery, function (error, projects) {
     const errorMessages = [];
 
     if (error) {
@@ -419,6 +419,23 @@ app.get("/adminpage", function (request, response) {
 
     response.render("adminpage.hbs", model);
   });
+  
+  const faqQuery = `SELECT * FROM FAQ`;
+  db.all(faqQuery, function (error, faq) {
+    const errorMessages = [];
+
+    if (error) {
+      errorMessages.push("Internal server error");
+    }
+
+    const model = {
+      errorMessages,
+      faq,
+    };
+
+    response.render("adminpage.hbs", model);
+  });
+
 });
 
 

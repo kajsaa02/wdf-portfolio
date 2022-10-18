@@ -1,7 +1,9 @@
 <h1 class="header-large text-center">Hi admin.</h1>
 <h3 class="text-center">You rule this place now</h3>
 
-<p>You have unanswered questions!</p>
+
+{{!-- <p>You have unanswered questions!</p> --}}
+
 
 <div class="card">
             <div class="card-header">
@@ -12,6 +14,23 @@
     <a href="/answer_question" class="card-subtitle text-primary">Answer Question!</a>
 
           </div>
+          {{#if projects.length}}
+      <div>
+        {{#each faq}}
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title h5">{{question}}</div>
+              <div class="card-subtitle text-gray">{{reply}}</div>
+            <a href="/faq/update/{{id}}" class="card-subtitle text-primary">Update</a>
+            <a href="/faq/delete/{{id}}" class="card-subtitle text-primary">Delete</a>
+          </div>
+
+        {{/each}}
+      </div>
+    {{else}}
+      <p>No projects can be showed right now</p>
+    {{/if}}
 
 
 <div class="divider"></div>
