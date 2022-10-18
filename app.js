@@ -64,6 +64,7 @@ app.get("/", function (request, response) {
 
 app.get("/projects", function (request, response) {
   const query = `SELECT * FROM Projects`;
+  isLoggedIn = request.session.isLoggedIn;
 
   db.all(query, function (error, projects) {
     const errorMessages = [];
@@ -75,6 +76,7 @@ app.get("/projects", function (request, response) {
     const model = {
       errorMessages,
       projects,
+      isLoggedIn
     };
 
     response.render("projects.hbs", model);
