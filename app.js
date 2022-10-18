@@ -274,12 +274,65 @@ app.post("/projects/update/:id", function (request, response) {
       html_link,
       id,
     };
-
     response.render("create_project.hbs", model);
   }
 });
 
+app.get("/projects/delete/:id", function (request, response) {
+  const id = request.params.id;
+  const errorMessages = [];
+
+  if(!request.session.isLoggedIn){
+		errorMessages.push("Not logged in")
+	}
+  
+  if (typeof id === "undefined") {
+    errorMessages.push(
+      "No record specified"
+    )};
+    
+  if (errorMessages.length == 0) {
+  
+    const query = `DELETE FROM Projects WHERE id = ?`;
+    const values = [id];
+    
+    db.run(query, values, function (error, project) {
+  
+      const model = {
+      project
+    };
+    
+    if (error) {
+      errorMessages.push("Internal server error");
+
+      const model = {
+        errorMessages,
+        id,
+      };
+      console.log("hejhopp");
+      response.redirect("/adminpage");
+      
+    } else {
+      response.redirect("/adminpage");
+      //response.render("adminpage.hbs", model);
+    }
+  }); 
+  
+  }else{
+    
+    const model = {
+      errorMessages,
+      id,
+    };
+
+    response.render("adminpage.hbs", model);
+  };
+});
+
+
+
 app.get("/faq", function (request, response) {
+
 
   const query = `SELECT * FROM FAQ WHERE reply NOT NULL`;
 
@@ -333,15 +386,10 @@ app.post("/faq", function (request, response) {
 
         response.render("faq.hbs", model);
       } else {
-        //response.redirect("/faq");
+        
         const updated=true;
-        const model = {
-          errorMessages,
-          question,
-          updated
-          };
-        console.log(model);
-        response.render("faq.hbs", model);
+       
+        response.redirect("/faq");
       }
     });
   } else {
@@ -350,7 +398,7 @@ app.post("/faq", function (request, response) {
       question,
     };
 
-    response.render("faq_sent_question.hbs", model);
+    response.render("faq.hbs", model);
   }
 });
 
