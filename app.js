@@ -427,22 +427,22 @@ app.get("/faq/update/:id", function (request, response) {
   const id = request.params.id;
   const isLoggedIn = request.session.isLoggedIn;
 
-  const query = `SELECT * FROM Projects WHERE id = ?`;
+  const query = `SELECT * FROM faq WHERE id = ?`;
   const values = [id];
-
+  
   db.get(query, values, function (error, faq) {
     const model = {
       faq, 
-      isLoggedIn
-    };
+      isLoggedIn};
 
-    response.render("update_faq.hbs", model);
+      response.render("update_faq.hbs", model);
+
   });
 });
 
 app.post("/faq/update/:id", function (request, response) {
   const question = request.body.question;
-  const reply = request.reply;
+  const reply = request.body.reply;
   const id = request.params.id;
   const isLoggedIn = request.session.isLoggedIn;
 
