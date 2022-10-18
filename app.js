@@ -423,6 +423,55 @@ app.get("/project_adminpage", function (request, response) {
   });
 });
   
+app.get("/FAQ/delete/:id", function (request, response) {
+  const id = request.params.id;
+  const errorMessages = [];
+
+  if(!request.session.isLoggedIn){
+		errorMessages.push("Not logged in")
+	}
+  
+  if (typeof id === "undefined") {
+    errorMessages.push(
+      "No record specified"
+    )};
+    
+  if (errorMessages.length == 0) {
+  
+    const query = `DELETE FROM faq WHERE id = ?`;
+    const values = [id];
+    
+    db.run(query, values, function (error, faq) {
+  
+      const model = {
+      faq
+    };
+    
+    if (error) {
+      errorMessages.push("Internal server error");
+
+      response.redirect("/faq_adminpage");
+      
+    } else {
+      response.redirect("/faq_adminpage");
+      
+    }
+  }); 
+  
+  }else{
+    
+    const model = {
+      errorMessages,
+      id,
+    };
+
+    response.render("faq_adminpage.hbs", model);
+  };
+});
+
+
+
+
 app.get("/faq_adminpage", function (request, response) {
   
   const faqQuery = `SELECT * FROM FAQ`;
