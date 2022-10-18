@@ -1,22 +1,28 @@
-<h1 class="header-large text-center">Frequently Asked Questions</h1>
+<h1 class="header-large text-center">About Kajsa</h1>
+
+<p>Here thy be some fanciful information about yours truly. The information is not currently here but we are close to finding it. Thank you for your patience.</p>
+
+<h4>Frequently asked Questions</h4>
 
 {{#if updated}}
   <p>Question added,will be anserd shortly</p>
 {{/if}}
 
-{{#if faq.length}}
-  <ul>
-    {{#each faq}}
-      <li>
-        <p>{{question}}</p>
-        <p>{{reply}}</p>
-      </li>
-    {{/each}}
-  </ul>
-{{else}}
-  <p>Ain't no questions here...</p>
+ {{#if faq.length}}
+      <div>
+        {{#each faq}}
 
-{{/if}}
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title h5">{{question}}</div>
+              <div class="card-subtitle text-gray">{{reply}}</div>
+          </div>
+
+        {{/each}}
+      </div>
+    {{else}}
+      <p>No questions can be showed right now</p>
+    {{/if}}
 
 <h4>Ask a question!</h4>
 
