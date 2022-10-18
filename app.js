@@ -8,6 +8,8 @@ const ITEM_NAME_MAX_LENGTH = 50;
 const ITEM_DESCRIPTION_MAX_LENGTH = 100;
 const ITEM_DESCRIPTION_FULL_MAX_LENGTH = 500;
 const ITEM_HTML_LINK_MAX_LENGTH = 100;
+const ITEM_FAQ_MAX_LENGTH = 500;
+
 const ADMIN_USERNAME = "Kajsa";
 const ADMIN_PASSWORD = "PappaÄrBäst";
 
@@ -416,6 +418,89 @@ app.get("/project_adminpage", function (request, response) {
     response.render("project_adminpage.hbs", model);
   });
 });
+
+
+
+app.get("/faq/update/:id", function (request, response) {
+  const id = request.params.id;
+  const isLoggedIn = request.session.isLoggedIn;
+
+  const query = `SELECT * FROM Projects WHERE id = ?`;
+  const values = [id];
+
+  db.get(query, values, function (error, faq) {
+    const model = {
+      faq, 
+      isLoggedIn
+    };
+
+    response.render("update_faq.hbs", model);
+  });
+});
+
+app.post("/faq/update/:id", function (request, response) {
+  const question = request.body.question;
+  const reply = request.reply;
+  const id = request.params.id;
+  const isLoggedIn = request.session.isLoggedIn;
+
+  const errorMessages = [];
+
+  if (question == "") {
+    errorMessages.push("Question can't be empty");
+  } else if (ITEM_FAQ_MAX_LENGTH < question.length) {
+    errorMessages.push(
+      "Question may be at most " +
+        ITEM_FAQ_MAX_LENGTH +
+        " characters long"
+    );
+  }
+
+  if (ITEM_FAQ_MAX_LENGTH < reply.length) {
+    errorMessages.push(
+      "Reply may be at most " +
+        ITEM_FAQ_MAX_LENGTH +
+        " characters long"
+    );
+  }
+
+  
+
+  if (errorMessages.length == 0) {
+    const query = `UPDATE faq SET question =?, reply = ? WHERE id = ?`;
+
+    const values = [question, reply, id];
+
+    db.run(query, values, function (error) {
+      
+      if (error) {
+        errorMessages.push("Internal server error");
+
+        const model = {
+          errorMessages,
+          question,
+          reply,
+          id,
+          isLoggedIn
+        };
+
+        response.render("update_faq.hbs", model);
+      } else {
+        response.redirect("/projects");
+      }
+    });
+  } else {
+    const model = {
+      errorMessages,
+      question,
+      reply,
+      id,
+      isLoggedIn
+    };
+    response.render("update_faq.hbs", model);
+  }
+});
+
 
 app.get("/FAQ/delete/:id", function (request, response) {
   const id = request.params.id;
