@@ -1,17 +1,22 @@
-<h1>This is a header</h1>
-<p>And this is also text</p>
+<h1 class="header-large text-center" id="header-margin">Kajsa Andersson</h1>
+<h3 class="text-center">I'm a creative.</h3>
 
-<div class="panel">
-  <div class="panel-header">
-    <div class="panel-title">Comments</div>
-  </div>
-  <div class="panel-nav">
-    <!-- navigation components: tabs, breadcrumbs or pagination -->
-  </div>
-  <div class="panel-body">
-    <!-- contents -->
-  </div>
-  <div class="panel-footer">
-    <!-- buttons or inputs -->
-  </div>
+<div class="projects-container">
+  <h6>Check out some projects!</h6>
+  {{#if projects.length}}
+    <div>
+      {{#each projects}}
+        <a href="/project/{{id}}">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title h5">{{name}}</div>
+              <div class="card-subtitle text-gray">{{description}}</div>
+            </div>
+          </div>
+        </a>
+      {{/each}}
+    </div>
+  {{else}}
+    <p>No projects can be showed right now</p>
+  {{/if}}
 </div>

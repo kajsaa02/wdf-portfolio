@@ -1,59 +1,40 @@
-<h1>This is a header projects</h1>
-
+<h1 class="header-large text-center">Check out some projects!</h1>
 
 {{#if errorMessages.length}}
-	<p>No projects available because:</p>
-	<ul>
-		{{#each errorMessages}}
-			<li>{{this}}</li>
-		{{/each}}
-	</ul>
-	
+  <p>No projects available because:</p>
+  <ul>
+    {{#each errorMessages}}
+      <li>{{this}}</li>
+    {{/each}}
+  </ul>
+
 {{else}}
 
-    {{#if errorMessages.length}}
-        <p>Couldn't fetch the movies because:</p>
-        <ul>
-            {{#each errorMessages}}
-                <li>{{this}}</li>
-            {{/each}}
-        </ul>
-        
-    {{/if}}
+  {{#if errorMessages.length}}
+    <p>Couldn't fetch the movies because:</p>
+    <ul>
+      {{#each errorMessages}}
+        <li>{{this}}</li>
+      {{/each}}
+    </ul>
 
-
-    <div>
-        <h4>titel
-        </h4>
-        <p>short desc</p>
-    </div>
-
-
+  {{/if}}
+  <div class="projects-container">
     {{#if projects.length}}
-        <ul>
-            {{#each projects}}
-                    <li>
-                        {{id}}
-                        
-                        <a href="/project/{{id}}">
-                            {{name}}
-                        </a>
-                                                            
-                        {{description}}
-
-                        {{description_full}}
-
-                        {{html_link}}
-
-                        <a href="/projects/update/{{id}}"> Update </a>
-
-                      
-                    </li>
-            {{/each}}
-        </ul>   
+      <div>
+        {{#each projects}}
+          <a href="/project/{{id}}">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title h5">{{name}}</div>
+                <div class="card-subtitle text-gray">{{description}}</div>
+              </div>
+            </div>
+          </a>
+        {{/each}}
+      </div>
     {{else}}
-        <p> No project </p>
+      <p>No projects can be showed right now</p>
     {{/if}}
-
+  </div>
 {{/if}}
-

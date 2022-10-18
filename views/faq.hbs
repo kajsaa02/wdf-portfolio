@@ -1,0 +1,37 @@
+<h1>Frequently Asked Questions</h1>
+
+{{#if faq.length}}
+  <ul>
+    {{#each faq}}
+      <li>
+        <p>{{question}}</p>
+        <p>{{reply}}</p>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <p>Ain't no questions here...</p>
+
+{{/if}}
+
+<h4>Ask a question!</h4>
+
+{{#if errorMessages.length}}
+  <p>Couldn't create projcet due to:</p>
+  <ul>
+    {{#each errorMessages}}
+      <li>{{this}}</li>
+    {{/each}}
+  </ul>
+{{/if}}
+
+<form action="/faq_sent_question" method="post">
+
+  <div>
+    Question:
+    <input type="text" name="question" value="{{question}}" />
+  </div>
+
+  <input type="submit" value="Create now" />
+
+</form>
