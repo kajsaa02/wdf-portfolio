@@ -1,21 +1,25 @@
-<h1 class="header-large text-center">Frequently Asked Questions</h1>
+<h1 class="header-large text-center">About Kajsa</h1>
 
-{{#if updated}}
-  <p>Question added,will be anserd shortly</p>
-{{/if}}
+<p>Here thy be a fantastic text about the magnificent Kajsa. Here it comes.
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae quo
+  voluptate omnis voluptatem placeat labore nihil. Tempore voluptate illo illum
+  velit vel modi molestias quibusdam cumque culpa earum. Laborum, consectetur!</p>
+
+<h4>Some frequently asked questions</h4>
 
 {{#if faq.length}}
-  <ul>
+  <div>
     {{#each faq}}
-      <li>
-        <p>{{question}}</p>
-        <p>{{reply}}</p>
-      </li>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title h5">{{question}}</div>
+          <div class="card-subtitle text-gray">{{reply}}</div>
+        </div>
+      </div>
     {{/each}}
-  </ul>
+  </div>
 {{else}}
-  <p>Ain't no questions here...</p>
-
+  <p>There are no questions yet, be the first!</p>
 {{/if}}
 
 <h4>Ask a question!</h4>
@@ -39,3 +43,7 @@
   <input type="submit" value="Create now" />
 
 </form>
+
+{{#if updated}}
+  <p>Question added,will be anserd shortly</p>
+{{/if}}
