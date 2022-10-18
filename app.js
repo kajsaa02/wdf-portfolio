@@ -87,6 +87,7 @@ app.get("/projects", function (request, response) {
 
 app.get("/project/:id", function (request, response) {
   const id = request.params.id;
+  isLoggedIn = request.session.isLoggedIn;
 
   const query = `SELECT * FROM Projects WHERE id = ?`;
   const values = [id];
@@ -94,6 +95,7 @@ app.get("/project/:id", function (request, response) {
   db.get(query, values, function (error, project) {
     const model = {
       project,
+      isLoggedIn,
     };
 
     response.render("project.hbs", model);
@@ -346,7 +348,7 @@ app.get("/faq", function (request, response) {
     const model = {
       errorMessages,
       faq,
-      isLoggedIn
+      isLoggedIn,
     };
 
     response.render("faq.hbs", model);
@@ -421,8 +423,6 @@ app.get("/project_adminpage", function (request, response) {
   });
 });
 
-
-
 app.get("/faq/update/:id", function (request, response) {
   const id = request.params.id;
   const isLoggedIn = request.session.isLoggedIn;
@@ -432,8 +432,8 @@ app.get("/faq/update/:id", function (request, response) {
 
   db.get(query, values, function (error, faq) {
     const model = {
-      faq, 
-      isLoggedIn
+      faq,
+      isLoggedIn,
     };
 
     response.render("update_faq.hbs", model);
@@ -452,21 +452,15 @@ app.post("/faq/update/:id", function (request, response) {
     errorMessages.push("Question can't be empty");
   } else if (ITEM_FAQ_MAX_LENGTH < question.length) {
     errorMessages.push(
-      "Question may be at most " +
-        ITEM_FAQ_MAX_LENGTH +
-        " characters long"
+      "Question may be at most " + ITEM_FAQ_MAX_LENGTH + " characters long"
     );
   }
 
   if (ITEM_FAQ_MAX_LENGTH < reply.length) {
     errorMessages.push(
-      "Reply may be at most " +
-        ITEM_FAQ_MAX_LENGTH +
-        " characters long"
+      "Reply may be at most " + ITEM_FAQ_MAX_LENGTH + " characters long"
     );
   }
-
-  
 
   if (errorMessages.length == 0) {
     const query = `UPDATE faq SET question =?, reply = ? WHERE id = ?`;
@@ -474,7 +468,6 @@ app.post("/faq/update/:id", function (request, response) {
     const values = [question, reply, id];
 
     db.run(query, values, function (error) {
-      
       if (error) {
         errorMessages.push("Internal server error");
 
@@ -483,7 +476,7 @@ app.post("/faq/update/:id", function (request, response) {
           question,
           reply,
           id,
-          isLoggedIn
+          isLoggedIn,
         };
 
         response.render("update_faq.hbs", model);
@@ -497,12 +490,11 @@ app.post("/faq/update/:id", function (request, response) {
       question,
       reply,
       id,
-      isLoggedIn
+      isLoggedIn,
     };
     response.render("update_faq.hbs", model);
   }
 });
-
 
 app.get("/FAQ/delete/:id", function (request, response) {
   const id = request.params.id;
