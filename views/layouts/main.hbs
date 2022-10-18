@@ -26,7 +26,14 @@
         <a href="/projects" class="btn btn-link">Projects</a>
         <a href="/about" class="btn btn-link">About me</a>
         <a href="/contact" class="btn btn-link">Contact</a>
-        <a href="/projects/create" class="btn btn-link">Create Project</a>
+
+        {{#if isLoggedIn}}
+          <a href="/adminpage"> Adminpage</a>
+          <a href="/logout"> Log out</a>
+        {{else}}
+          <a href="/login">Log in </a>
+
+        {{/if}}
       </section>
     </header>
     {{{body}}}
