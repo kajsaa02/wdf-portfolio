@@ -78,7 +78,7 @@ app.get("/projects", function (request, response) {
     const model = {
       errorMessages,
       projects,
-      isLoggedIn
+      isLoggedIn,
     };
 
     response.render("projects.hbs", model);
@@ -333,6 +333,7 @@ app.get("/create_project", function (request, response) {
 
 app.get("/faq", function (request, response) {
   const query = `SELECT * FROM FAQ WHERE reply NOT NULL`;
+  const isLoggedIn = request.session.isLoggedIn;
 
   db.all(query, function (error, faq) {
     const errorMessages = [];
@@ -345,6 +346,7 @@ app.get("/faq", function (request, response) {
     const model = {
       errorMessages,
       faq,
+      isLoggedIn,
     };
 
     response.render("faq.hbs", model);
@@ -589,7 +591,13 @@ app.post("/login", function (request, response) {
 });
 
 app.get("/adminpage", function (request, response) {
-  response.render("adminpage.hbs");
+  const isLoggedIn = request.session.isLoggedIn;
+
+  const model = {
+    isLoggedIn,
+  };
+
+  response.render("adminpage.hbs", model);
 });
 
 app.listen(8080);
