@@ -8,6 +8,8 @@ const ITEM_NAME_MAX_LENGTH = 50;
 const ITEM_DESCRIPTION_MAX_LENGTH = 100;
 const ITEM_DESCRIPTION_FULL_MAX_LENGTH = 500;
 const ITEM_HTML_LINK_MAX_LENGTH = 100;
+const ADMIN_USERNAME = "Kajsa"
+const ADMIN_PASSWORD = "PappaÄrBäst"
 
 const db = new sqlite3.Database("wdf_portfolio.db");
 
@@ -25,7 +27,27 @@ app.use(
   })
 );
 
+app.use(
+	expressSession({
+		saveUninitialized: false,
+		resave: false,
+		secret: "fdgfdskdjslakfj"
+	})
+)
+
+
+app.use(
+	function(request, response, next){
+		response.locals.session = request.session
+		next()
+	}
+)
+
+
 app.get("/", function (request, response) {
+  
+  isLoggedIn=request.session.isLoggedIn;
+  
   const query = `SELECT * FROM Projects LIMIT 3`;
 
   db.all(query, function (error, projects) {
@@ -38,7 +60,10 @@ app.get("/", function (request, response) {
     const model = {
       errorMessages,
       projects,
+      isLoggedIn,
+  
     };
+  
     response.render("homepage.hbs", model);
   });
 });
@@ -90,6 +115,11 @@ app.post("/projects/create", function (request, response) {
   const html_link = request.body.html_link;
 
   const errorMessages = [];
+
+	
+  if(!request.session.isLoggedIn){
+		errorMessages.push("Not logged in")
+	}
 
   if (name == "") {
     errorMessages.push("Name can't be empty");
@@ -302,7 +332,7 @@ app.post("/faq", function (request, response) {
     const query = `INSERT INTO faq (question) VALUES (?)`;
     // Note: id is auto inserted by the databas
 
-    const value = question;
+    const value = [question];
 
     db.run(query, value, function (error) {
       console.log(error);
@@ -315,9 +345,17 @@ app.post("/faq", function (request, response) {
           question,
         };
 
-        response.render("faq_sent_question.hbs", model);
+        response.render("faq.hbs", model);
       } else {
-        response.redirect("/faq");
+        //response.redirect("/faq");
+        const updated=true;
+        const model = {
+          errorMessages,
+          question,
+          updated
+          };
+        console.log(model);
+        response.render("faq.hbs", model);
       }
     });
   } else {
@@ -329,5 +367,39 @@ app.post("/faq", function (request, response) {
     response.render("faq_sent_question.hbs", model);
   }
 });
+
+
+app.get("/login", function(request, response){
+	response.render("login.hbs")
+})
+
+app.get("/logout", function(request, response){
+	request.session.isLoggedIn = false;
+  response.redirect("/")
+})
+
+app.post("/login", function(request, response){
+	
+	const username = request.body.username
+	const password = request.body.password
+	
+	if(username == ADMIN_USERNAME && password == ADMIN_PASSWORD){
+		
+		request.session.isLoggedIn = true
+		
+		response.redirect("/");
+
+
+	}else{
+		
+		const model = {
+			failedToLogin: true
+		}
+		
+		response.render('login.hbs', model)
+		
+	}
+	
+})
 
 app.listen(8080);

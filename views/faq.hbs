@@ -1,5 +1,9 @@
 <h1>Frequently Asked Questions</h1>
 
+{{#if updated}}
+  <p>Question added,will be anserd shortly</p>
+{{/if}}
+
 {{#if faq.length}}
   <ul>
     {{#each faq}}
@@ -25,7 +29,7 @@
   </ul>
 {{/if}}
 
-<form action="/faq_sent_question" method="post">
+<form action="/faq" method="post">
 
   <div>
     Question:
