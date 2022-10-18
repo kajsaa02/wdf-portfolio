@@ -8,8 +8,8 @@ const ITEM_NAME_MAX_LENGTH = 50;
 const ITEM_DESCRIPTION_MAX_LENGTH = 100;
 const ITEM_DESCRIPTION_FULL_MAX_LENGTH = 500;
 const ITEM_HTML_LINK_MAX_LENGTH = 100;
-const ADMIN_USERNAME = "Kajsa"
-const ADMIN_PASSWORD = "PappaÄrBäst"
+const ADMIN_USERNAME = "Kajsa";
+const ADMIN_PASSWORD = "PappaÄrBäst";
 
 const db = new sqlite3.Database("wdf_portfolio.db");
 
@@ -28,26 +28,21 @@ app.use(
 );
 
 app.use(
-	expressSession({
-		saveUninitialized: false,
-		resave: false,
-		secret: "fdgfdskdjslakfj"
-	})
+  expressSession({
+    saveUninitialized: false,
+    resave: false,
+    secret: "fdgfdskdjslakfj",
+  })
 );
 
-
-app.use(
-	function(request, response, next){
-		response.locals.session = request.session
-		next()
-	}
-);
-
+app.use(function (request, response, next) {
+  response.locals.session = request.session;
+  next();
+});
 
 app.get("/", function (request, response) {
-  
-  isLoggedIn=request.session.isLoggedIn;
-  
+  isLoggedIn = request.session.isLoggedIn;
+
   const query = `SELECT * FROM Projects LIMIT 3`;
 
   db.all(query, function (error, projects) {
@@ -55,14 +50,14 @@ app.get("/", function (request, response) {
 
     if (error) {
       errorMessages.push("Internal server error");
-    };
+    }
 
     const model = {
       errorMessages,
       projects,
       isLoggedIn,
     };
-  
+
     response.render("homepage.hbs", model);
   });
 });
@@ -115,10 +110,9 @@ app.post("/projects/create", function (request, response) {
 
   const errorMessages = [];
 
-	
-  if(!request.session.isLoggedIn){
-		errorMessages.push("Not logged in")
-	};
+  if (!request.session.isLoggedIn) {
+    errorMessages.push("Not logged in");
+  }
 
   if (name == "") {
     errorMessages.push("Name can't be empty");
@@ -130,19 +124,25 @@ app.post("/projects/create", function (request, response) {
 
   if (ITEM_DESCRIPTION_MAX_LENGTH < description.length) {
     errorMessages.push(
-      "Description may be at most " + ITEM_DESCRIPTION_MAX_LENGTH + " characters long"
+      "Description may be at most " +
+        ITEM_DESCRIPTION_MAX_LENGTH +
+        " characters long"
     );
   }
 
   if (ITEM_DESCRIPTION_FULL_MAX_LENGTH < description_full.length) {
     errorMessages.push(
-      "Full Description may be at most " + ITEM_DESCRIPTION_FULL_MAX_LENGTH + " characters long"
+      "Full Description may be at most " +
+        ITEM_DESCRIPTION_FULL_MAX_LENGTH +
+        " characters long"
     );
   }
 
   if (ITEM_HTML_LINK_MAX_LENGTH < name.length) {
     errorMessages.push(
-      "HTML Link may be at most " + ITEM_HTML_LINK_MAX_LENGTH + " characters long"
+      "HTML Link may be at most " +
+        ITEM_HTML_LINK_MAX_LENGTH +
+        " characters long"
     );
   }
 
@@ -207,14 +207,14 @@ app.post("/projects/update/:id", function (request, response) {
   const id = request.params.id;
 
   const errorMessages = [];
-  
+
   if (name == "" || typeof name === "undefined") {
     errorMessages.push("Name can't be empty");
   } else if (ITEM_NAME_MAX_LENGTH < name.length) {
     errorMessages.push(
-      "Description may be at most " + 
-      ITEM_NAME_TITLE_MAX_LENGTH + 
-      " characters long"
+      "Description may be at most " +
+        ITEM_NAME_TITLE_MAX_LENGTH +
+        " characters long"
     );
   }
 
@@ -282,58 +282,52 @@ app.get("/projects/delete/:id", function (request, response) {
   const id = request.params.id;
   const errorMessages = [];
 
-  if(!request.session.isLoggedIn){
-		errorMessages.push("Not logged in")
-	}
-  
+  if (!request.session.isLoggedIn) {
+    errorMessages.push("Not logged in");
+  }
+
   if (typeof id === "undefined") {
-    errorMessages.push(
-      "No record specified"
-    )};
-    
+    errorMessages.push("No record specified");
+  }
+
   if (errorMessages.length == 0) {
-  
     const query = `DELETE FROM Projects WHERE id = ?`;
     const values = [id];
-    
-    db.run(query, values, function (error, project) {
-  
-      const model = {
-      project
-    };
-    
-    if (error) {
-      errorMessages.push("Internal server error");
 
+    db.run(query, values, function (error, project) {
       const model = {
-        errorMessages,
-        id,
+        project,
       };
-      console.log("hejhopp");
-      response.redirect("/adminpage");
-      
-    } else {
-      response.redirect("/adminpage");
-      //response.render("adminpage.hbs", model);
-    }
-  }); 
-  
-  }else{
-    
+
+      if (error) {
+        errorMessages.push("Internal server error");
+
+        const model = {
+          errorMessages,
+          id,
+        };
+        console.log("hejhopp");
+        response.redirect("/project_adminpage");
+      } else {
+        response.redirect("/project_adminpage");
+        //response.render("adminpage.hbs", model);
+      }
+    });
+  } else {
     const model = {
       errorMessages,
       id,
     };
 
-    response.render("adminpage.hbs", model);
-  };
+    response.render("project_adminpage.hbs", model);
+  }
 });
 
-
+app.get("/create_project", function (request, response) {
+  response.render("create_project.hbs");
+});
 
 app.get("/faq", function (request, response) {
-
-
   const query = `SELECT * FROM FAQ WHERE reply NOT NULL`;
 
   db.all(query, function (error, faq) {
@@ -354,7 +348,6 @@ app.get("/faq", function (request, response) {
 });
 
 app.post("/faq", function (request, response) {
-  
   const question = request.body.question;
 
   const errorMessages = [];
@@ -386,9 +379,8 @@ app.post("/faq", function (request, response) {
 
         response.render("faq.hbs", model);
       } else {
-        
-        const updated=true;
-       
+        const updated = true;
+
         response.redirect("/faq");
       }
     });
@@ -404,7 +396,7 @@ app.post("/faq", function (request, response) {
 
 app.get("/project_adminpage", function (request, response) {
   const projQuery = `SELECT * FROM Projects`;
-  const isLoggedIn=request.session.isLoggedIn;
+  const isLoggedIn = request.session.isLoggedIn;
 
   db.all(projQuery, function (error, projects) {
     const errorMessages = [];
@@ -416,18 +408,17 @@ app.get("/project_adminpage", function (request, response) {
     const model = {
       errorMessages,
       projects,
-      isLoggedIn
+      isLoggedIn,
     };
 
     response.render("project_adminpage.hbs", model);
   });
 });
-  
+
 app.get("/faq_adminpage", function (request, response) {
-  
   const faqQuery = `SELECT * FROM FAQ`;
-  const isLoggedIn=request.session.isLoggedIn;
-    
+  const isLoggedIn = request.session.isLoggedIn;
+
   db.all(faqQuery, function (error, faq) {
     const errorMessages = [];
 
@@ -438,46 +429,41 @@ app.get("/faq_adminpage", function (request, response) {
     const model = {
       errorMessages,
       faq,
-      isLoggedIn 
+      isLoggedIn,
     };
 
     response.render("faq_adminpage.hbs", model);
   });
-
 });
 
+app.get("/login", function (request, response) {
+  response.render("login.hbs");
+});
 
-app.get("/login", function(request, response){
-	response.render("login.hbs")
-})
+app.get("/logout", function (request, response) {
+  request.session.isLoggedIn = false;
+  response.redirect("/");
+});
 
-app.get("/logout", function(request, response){
-	request.session.isLoggedIn = false;
-  response.redirect("/")
-})
+app.post("/login", function (request, response) {
+  const username = request.body.username;
+  const password = request.body.password;
 
-app.post("/login", function(request, response){
-	
-	const username = request.body.username
-	const password = request.body.password
-	
-	if(username == ADMIN_USERNAME && password == ADMIN_PASSWORD){
-		
-		request.session.isLoggedIn = true
-		
-		response.redirect("/");
+  if (username == ADMIN_USERNAME && password == ADMIN_PASSWORD) {
+    request.session.isLoggedIn = true;
 
+    response.redirect("/");
+  } else {
+    const model = {
+      failedToLogin: true,
+    };
 
-	}else{
-		
-		const model = {
-			failedToLogin: true
-		}
-		
-		response.render('login.hbs', model)
-		
-	}
-	
-})
+    response.render("login.hbs", model);
+  }
+});
+
+app.get("/adminpage", function (request, response) {
+  response.render("adminpage.hbs");
+});
 
 app.listen(8080);
