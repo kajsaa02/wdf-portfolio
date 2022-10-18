@@ -346,7 +346,7 @@ app.get("/faq", function (request, response) {
     const model = {
       errorMessages,
       faq,
-      isLoggedIn,
+      isLoggedIn
     };
 
     response.render("faq.hbs", model);
