@@ -402,8 +402,9 @@ app.post("/faq", function (request, response) {
   }
 });
 
-app.get("/adminpage", function (request, response) {
+app.get("/project_adminpage", function (request, response) {
   const projQuery = `SELECT * FROM Projects`;
+  const isLoggedIn=request.session.isLoggedIn;
 
   db.all(projQuery, function (error, projects) {
     const errorMessages = [];
@@ -415,12 +416,18 @@ app.get("/adminpage", function (request, response) {
     const model = {
       errorMessages,
       projects,
+      isLoggedIn
     };
 
-    response.render("adminpage.hbs", model);
+    response.render("project_adminpage.hbs", model);
   });
+});
+  
+app.get("/faq_adminpage", function (request, response) {
   
   const faqQuery = `SELECT * FROM FAQ`;
+  const isLoggedIn=request.session.isLoggedIn;
+    
   db.all(faqQuery, function (error, faq) {
     const errorMessages = [];
 
@@ -431,9 +438,10 @@ app.get("/adminpage", function (request, response) {
     const model = {
       errorMessages,
       faq,
+      isLoggedIn 
     };
 
-    response.render("adminpage.hbs", model);
+    response.render("faq_adminpage.hbs", model);
   });
 
 });
