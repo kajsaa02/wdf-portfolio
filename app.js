@@ -33,7 +33,7 @@ app.use(
 		resave: false,
 		secret: "fdgfdskdjslakfj"
 	})
-)
+);
 
 
 app.use(
@@ -41,7 +41,7 @@ app.use(
 		response.locals.session = request.session
 		next()
 	}
-)
+);
 
 
 app.get("/", function (request, response) {
@@ -55,13 +55,12 @@ app.get("/", function (request, response) {
 
     if (error) {
       errorMessages.push("Internal server error");
-    }
+    };
 
     const model = {
       errorMessages,
       projects,
       isLoggedIn,
-  
     };
   
     response.render("homepage.hbs", model);
@@ -119,7 +118,7 @@ app.post("/projects/create", function (request, response) {
 	
   if(!request.session.isLoggedIn){
 		errorMessages.push("Not logged in")
-	}
+	};
 
   if (name == "") {
     errorMessages.push("Name can't be empty");
@@ -131,25 +130,19 @@ app.post("/projects/create", function (request, response) {
 
   if (ITEM_DESCRIPTION_MAX_LENGTH < description.length) {
     errorMessages.push(
-      "Description may be at most " +
-        ITEM_DESCRIPTION_MAX_LENGTH +
-        " characters long"
+      "Description may be at most " + ITEM_DESCRIPTION_MAX_LENGTH + " characters long"
     );
   }
 
   if (ITEM_DESCRIPTION_FULL_MAX_LENGTH < description_full.length) {
     errorMessages.push(
-      "Full Description may be at most " +
-        ITEM_DESCRIPTION_FULL_MAX_LENGTH +
-        " characters long"
+      "Full Description may be at most " + ITEM_DESCRIPTION_FULL_MAX_LENGTH + " characters long"
     );
   }
 
   if (ITEM_HTML_LINK_MAX_LENGTH < name.length) {
     errorMessages.push(
-      "HTML Link may be at most " +
-        ITEM_HTML_LINK_MAX_LENGTH +
-        " characters long"
+      "HTML Link may be at most " + ITEM_HTML_LINK_MAX_LENGTH + " characters long"
     );
   }
 
@@ -211,22 +204,17 @@ app.post("/projects/update/:id", function (request, response) {
   const description = request.body.description;
   const description_full = request.body.description_full;
   const html_link = request.body.html_link;
-  // const id = request.body.id
   const id = request.params.id;
 
-  // Both methods work to get the id from the form
-  //console.log("paramter:", request.params.id)
-  //console.log("body:    ", request.body.id)
-
   const errorMessages = [];
-
+  
   if (name == "" || typeof name === "undefined") {
     errorMessages.push("Name can't be empty");
   } else if (ITEM_NAME_MAX_LENGTH < name.length) {
     errorMessages.push(
-      "Description may be at most " +
-        ITEM_NAME_TITLE_MAX_LENGTH +
-        " characters long"
+      "Description may be at most " + 
+      ITEM_NAME_TITLE_MAX_LENGTH + 
+      " characters long"
     );
   }
 
@@ -294,9 +282,9 @@ app.post("/projects/update/:id", function (request, response) {
 app.get("/faq", function (request, response) {
   const values = [""];
 
-  const query = `SELECT * FROM FAQ WHERE reply IS NOT ?`;
+  const query = `SELECT * FROM FAQ WHERE reply NOT NULL`;
 
-  db.all(query, values, function (error, faq) {
+  db.all(query, function (error, faq) {
     const errorMessages = [];
 
     console.log(faq);
@@ -314,8 +302,7 @@ app.get("/faq", function (request, response) {
 });
 
 app.post("/faq", function (request, response) {
-  console.log("request.body:", request.body);
-
+  
   const question = request.body.question;
 
   const errorMessages = [];
