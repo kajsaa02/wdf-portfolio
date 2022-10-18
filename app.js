@@ -330,4 +330,23 @@ app.post("/faq", function (request, response) {
   }
 });
 
+app.get("/adminpage", function (request, response) {
+  const query = `SELECT * FROM Projects`;
+
+  db.all(query, function (error, projects) {
+    const errorMessages = [];
+
+    if (error) {
+      errorMessages.push("Internal server error");
+    }
+
+    const model = {
+      errorMessages,
+      projects,
+    };
+
+    response.render("adminpage.hbs", model);
+  });
+});
+
 app.listen(8080);
