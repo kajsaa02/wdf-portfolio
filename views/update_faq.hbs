@@ -1,0 +1,47 @@
+<h1>Update FAQ</h1>
+
+{{#if errorMessages.length}}
+	<p>Couldn't create FAQ due to:</p>
+	<ul>
+		{{#each errorMessages}}
+			<li>{{this}}</li>
+		{{/each}}
+	</ul>
+{{/if}}
+
+
+<h1>*************************************************</h1>
+
+{{#if faq}}
+	<p>FAQ ID {{faq.id}}</p>
+	<p>Question{{faq.question}}</p>
+    <p>Reply{{faq.reply}}</p>
+
+
+<h1>*************************************************</h1>
+
+<form action="/faq/update/{{faq.id}}" method="post">
+	
+	<div>
+		ID: <Input type="text" name="id" value="{{faq.id}}" readonly>
+	</div>
+	
+	<div>
+		Question: <input type="text" name="question" value="{{faq.question}}">
+	</div>
+	
+	<div>
+		Reply: <input type="text" name="reply" value="{{faq.reply}}">
+	</div>
+	
+	<input type="submit" value="update now">
+
+	<button onclick="history.back()" value="Cancel">Cancel</button>
+
+	<input type="submit" value="Delete" class="text-error">
+	
+</form>
+
+{{else}}
+	<p>That faq does not exist.</p>
+{{/if}}
