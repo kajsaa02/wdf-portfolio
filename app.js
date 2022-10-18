@@ -280,7 +280,6 @@ app.post("/projects/update/:id", function (request, response) {
 });
 
 app.get("/faq", function (request, response) {
-  const values = [""];
 
   const query = `SELECT * FROM FAQ WHERE reply NOT NULL`;
 
