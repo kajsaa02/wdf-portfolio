@@ -1,9 +1,12 @@
-const dummyData = require("./dummy-data");
 const express = require("express");
 const expressHandlebars = require("express-handlebars");
 const app = express();
 const sqlite3 = require("sqlite3");
 const expressSession = require("express-session");
+
+const bcrypt = require('bcrypt');
+const SALTROUNDS = 10;
+
 const ITEM_NAME_MAX_LENGTH = 50;
 const ITEM_DESCRIPTION_MAX_LENGTH = 100;
 const ITEM_DESCRIPTION_FULL_MAX_LENGTH = 500;
@@ -11,7 +14,8 @@ const ITEM_HTML_LINK_MAX_LENGTH = 100;
 const ITEM_FAQ_MAX_LENGTH = 500;
 
 const ADMIN_USERNAME = "Kajsa";
-const ADMIN_PASSWORD = "PappaÄrBäst";
+//const ADMIN_PASSWORD = "PappaÄrBäst";
+const ADMIN_PASSWORD = "$2b$10$atcpMY0PZF17BI4Yr9ZJteOU7qsGAXU4k52.wupsUbsh9YRgBUfje"
 
 const db = new sqlite3.Database("wdf_portfolio.db");
 
@@ -43,7 +47,7 @@ app.use(function (request, response, next) {
 });
 
 app.get("/", function (request, response) {
-  isLoggedIn = request.session.isLoggedIn;
+  const isLoggedIn = request.session.isLoggedIn;
 
   const query = `SELECT * FROM Projects LIMIT 3`;
 
@@ -57,7 +61,7 @@ app.get("/", function (request, response) {
     const model = {
       errorMessages,
       projects,
-      isLoggedIn,
+      isLoggedIn
     };
 
     response.render("homepage.hbs", model);
@@ -66,7 +70,7 @@ app.get("/", function (request, response) {
 
 app.get("/projects", function (request, response) {
   const query = `SELECT * FROM Projects`;
-  isLoggedIn = request.session.isLoggedIn;
+  const isLoggedIn = request.session.isLoggedIn;
 
   db.all(query, function (error, projects) {
     const errorMessages = [];
@@ -78,7 +82,7 @@ app.get("/projects", function (request, response) {
     const model = {
       errorMessages,
       projects,
-      isLoggedIn,
+      isLoggedIn
     };
 
     response.render("projects.hbs", model);
@@ -87,15 +91,16 @@ app.get("/projects", function (request, response) {
 
 app.get("/project/:id", function (request, response) {
   const id = request.params.id;
-  isLoggedIn = request.session.isLoggedIn;
+  const isLoggedIn = request.session.isLoggedIn;
 
   const query = `SELECT * FROM Projects WHERE id = ?`;
   const values = [id];
 
   db.get(query, values, function (error, project) {
+
     const model = {
       project,
-      isLoggedIn,
+      isLoggedIn
     };
 
     response.render("project.hbs", model);
@@ -103,22 +108,29 @@ app.get("/project/:id", function (request, response) {
 });
 
 app.get("/projects/create", function (request, response) {
-  response.render("create_project.hbs");
+
+  const isLoggedIn = request.session.isLoggedIn;
+
+  const model = {
+   isLoggedIn
+  };
+
+  response.render("create_project.hbs", model);
 });
 
 app.post("/projects/create", function (request, response) {
-  console.log("request.body:", request.body);
-
+  
   const name = request.body.name;
   const description = request.body.description;
   const description_full = request.body.description_full;
   const html_link = request.body.html_link;
-
+  const isLoggedIn = request.session.isLoggedIn;
+  
   const errorMessages = [];
 
-  if (!request.session.isLoggedIn) {
+  if (!isLoggedIn) {
     errorMessages.push("Not logged in");
-  }
+  };
 
   if (name == "") {
     errorMessages.push("Name can't be empty");
@@ -126,7 +138,7 @@ app.post("/projects/create", function (request, response) {
     errorMessages.push(
       "Description may be at most " + ITEM_NAME_MAX_LENGTH + " characters long"
     );
-  }
+  };
 
   if (ITEM_DESCRIPTION_MAX_LENGTH < description.length) {
     errorMessages.push(
@@ -134,7 +146,7 @@ app.post("/projects/create", function (request, response) {
         ITEM_DESCRIPTION_MAX_LENGTH +
         " characters long"
     );
-  }
+  };
 
   if (ITEM_DESCRIPTION_FULL_MAX_LENGTH < description_full.length) {
     errorMessages.push(
@@ -142,7 +154,7 @@ app.post("/projects/create", function (request, response) {
         ITEM_DESCRIPTION_FULL_MAX_LENGTH +
         " characters long"
     );
-  }
+  };
 
   if (ITEM_HTML_LINK_MAX_LENGTH < name.length) {
     errorMessages.push(
@@ -150,17 +162,15 @@ app.post("/projects/create", function (request, response) {
         ITEM_HTML_LINK_MAX_LENGTH +
         " characters long"
     );
-  }
+  };
 
   if (errorMessages.length == 0) {
     const query = `INSERT INTO projects (name, description, description_full, html_link) VALUES (?, ?, ?, ?)`;
-    // Note: id is auto inserted by the databas
-
+    
     const values = [name, description, description_full, html_link];
 
     db.run(query, values, function (error) {
-      console.log(error);
-
+      
       if (error) {
         errorMessages.push("Internal server error");
 
@@ -170,28 +180,31 @@ app.post("/projects/create", function (request, response) {
           description,
           description_full,
           html_link,
+          isLoggedIn
         };
 
         response.render("create_project.hbs", model);
       } else {
         response.redirect("/projects");
-      }
+      };
     });
   } else {
+
     const model = {
       errorMessages,
       name,
       description,
       description_full,
       html_link,
+      isLoggedIn
     };
-
     response.render("create_project.hbs", model);
-  }
+  };
 });
 
 app.get("/projects/update/:id", function (request, response) {
   const id = request.params.id;
+  const isLoggedIn = request.session.isLoggedIn;
 
   const query = `SELECT * FROM Projects WHERE id = ?`;
   const values = [id];
@@ -199,6 +212,7 @@ app.get("/projects/update/:id", function (request, response) {
   db.get(query, values, function (error, project) {
     const model = {
       project,
+      isLoggedIn
     };
 
     response.render("update_project.hbs", model);
@@ -211,6 +225,7 @@ app.post("/projects/update/:id", function (request, response) {
   const description_full = request.body.description_full;
   const html_link = request.body.html_link;
   const id = request.params.id;
+  const isLoggedIn = request.session.isLoggedIn;
 
   const errorMessages = [];
 
@@ -222,7 +237,7 @@ app.post("/projects/update/:id", function (request, response) {
         ITEM_NAME_TITLE_MAX_LENGTH +
         " characters long"
     );
-  }
+  };
 
   if (ITEM_DESCRIPTION_MAX_LENGTH < description.length) {
     errorMessages.push(
@@ -230,7 +245,7 @@ app.post("/projects/update/:id", function (request, response) {
         ITEM_DESCRIPTION_MAX_LENGTH +
         " characters long"
     );
-  }
+  };
 
   if (ITEM_DESCRIPTION_MAX_LENGTH < description_full.length) {
     errorMessages.push(
@@ -238,13 +253,13 @@ app.post("/projects/update/:id", function (request, response) {
         ITEM_DESCRIPTION_FULL_MAX_LENGTH +
         " characters long"
     );
-  }
+  };
 
   if (ITEM_HTML_LINK_MAX_LENGTH < name.length) {
     errorMessages.push(
       "Name may be at most " + ITEM_HTML_LINK_MAX_LENGTH + " characters long"
     );
-  }
+  };
 
   if (errorMessages.length == 0) {
     const query = `UPDATE projects SET name =?, description = ?, description_full =?, html_link = ? WHERE id = ?`;
@@ -252,8 +267,7 @@ app.post("/projects/update/:id", function (request, response) {
     const values = [name, description, description_full, html_link, id];
 
     db.run(query, values, function (error) {
-      console.log(error);
-
+      
       if (error) {
         errorMessages.push("Internal server error");
 
@@ -264,12 +278,13 @@ app.post("/projects/update/:id", function (request, response) {
           description_full,
           html_link,
           id,
+          isLoggedIn
         };
 
         response.render("update_project.hbs", model);
       } else {
         response.redirect("/projects");
-      }
+      };
     });
   } else {
     const model = {
@@ -279,16 +294,18 @@ app.post("/projects/update/:id", function (request, response) {
       description_full,
       html_link,
       id,
+      isLoggedIn
     };
     response.render("create_project.hbs", model);
-  }
+  };
 });
 
 app.get("/projects/delete/:id", function (request, response) {
   const id = request.params.id;
   const errorMessages = [];
+  const isLoggedIn = request.session.isLoggedIn;
 
-  if (!request.session.isLoggedIn) {
+  if (!isLoggedIn) {
     errorMessages.push("Not logged in");
   }
 
@@ -302,7 +319,7 @@ app.get("/projects/delete/:id", function (request, response) {
 
     db.run(query, values, function (error, project) {
       const model = {
-        project,
+        project
       };
 
       if (error) {
@@ -310,24 +327,46 @@ app.get("/projects/delete/:id", function (request, response) {
 
         const model = {
           errorMessages,
-          id,
+          id
         };
-        console.log("hejhopp");
+        
         response.redirect("/project_adminpage");
       } else {
         response.redirect("/project_adminpage");
-        //response.render("adminpage.hbs", model);
-      }
+      };
     });
   } else {
     const model = {
       errorMessages,
       id,
+      isLoggedIn
     };
 
     response.render("project_adminpage.hbs", model);
-  }
+  };
 });
+
+app.get("/project_adminpage", function (request, response) {
+  const projQuery = `SELECT * FROM Projects`;
+  const isLoggedIn = request.session.isLoggedIn;
+
+  db.all(projQuery, function (error, projects) {
+    const errorMessages = [];
+
+    if (error) {
+      errorMessages.push("Internal server error");
+    }
+
+    const model = {
+      errorMessages,
+      projects,
+      isLoggedIn
+    };
+
+    response.render("project_adminpage.hbs", model);
+  });
+});
+
 
 app.get("/create_project", function (request, response) {
   response.render("create_project.hbs");
@@ -340,15 +379,14 @@ app.get("/faq", function (request, response) {
   db.all(query, function (error, faq) {
     const errorMessages = [];
 
-    console.log(faq);
     if (error) {
       errorMessages.push("Internal server error");
-    }
+    };
 
     const model = {
       errorMessages,
       faq,
-      isLoggedIn,
+      isLoggedIn
     };
 
     response.render("faq.hbs", model);
@@ -366,23 +404,21 @@ app.post("/faq", function (request, response) {
     errorMessages.push(
       "Description may be at most " + ITEM_NAME_MAX_LENGTH + " characters long"
     );
-  }
+  };
 
   if (errorMessages.length == 0) {
     const query = `INSERT INTO faq (question) VALUES (?)`;
-    // Note: id is auto inserted by the databas
-
+    
     const value = [question];
 
     db.run(query, value, function (error) {
-      console.log(error);
-
+      
       if (error) {
         errorMessages.push("Internal server error");
 
         const model = {
           errorMessages,
-          question,
+          question
         };
 
         response.render("faq.hbs", model);
@@ -390,38 +426,18 @@ app.post("/faq", function (request, response) {
         const updated = true;
 
         response.redirect("/faq");
-      }
+      };
     });
   } else {
     const model = {
       errorMessages,
-      question,
+      question
     };
 
     response.render("faq.hbs", model);
   }
 });
 
-app.get("/project_adminpage", function (request, response) {
-  const projQuery = `SELECT * FROM Projects`;
-  const isLoggedIn = request.session.isLoggedIn;
-
-  db.all(projQuery, function (error, projects) {
-    const errorMessages = [];
-
-    if (error) {
-      errorMessages.push("Internal server error");
-    }
-
-    const model = {
-      errorMessages,
-      projects,
-      isLoggedIn,
-    };
-
-    response.render("project_adminpage.hbs", model);
-  });
-});
 
 app.get("/faq/update/:id", function (request, response) {
   const id = request.params.id;
@@ -433,7 +449,8 @@ app.get("/faq/update/:id", function (request, response) {
   db.get(query, values, function (error, faq) {
     const model = {
       faq, 
-      isLoggedIn};
+      isLoggedIn
+    };
 
       response.render("update_faq.hbs", model);
 
@@ -454,13 +471,13 @@ app.post("/faq/update/:id", function (request, response) {
     errorMessages.push(
       "Question may be at most " + ITEM_FAQ_MAX_LENGTH + " characters long"
     );
-  }
+  };
 
   if (ITEM_FAQ_MAX_LENGTH < reply.length) {
     errorMessages.push(
       "Reply may be at most " + ITEM_FAQ_MAX_LENGTH + " characters long"
     );
-  }
+  };
 
   if (errorMessages.length == 0) {
     const query = `UPDATE faq SET question =?, reply = ? WHERE id = ?`;
@@ -476,13 +493,13 @@ app.post("/faq/update/:id", function (request, response) {
           question,
           reply,
           id,
-          isLoggedIn,
+          isLoggedIn
         };
 
         response.render("update_faq.hbs", model);
       } else {
-        response.redirect("/projects");
-      }
+        response.redirect("/faq_adminpage");
+      };
     });
   } else {
     const model = {
@@ -490,23 +507,23 @@ app.post("/faq/update/:id", function (request, response) {
       question,
       reply,
       id,
-      isLoggedIn,
+      isLoggedIn
     };
     response.render("update_faq.hbs", model);
-  }
+  };
 });
 
-app.get("/FAQ/delete/:id", function (request, response) {
+app.get("/faq/delete/:id", function (request, response) {
   const id = request.params.id;
   const errorMessages = [];
 
   if (!request.session.isLoggedIn) {
     errorMessages.push("Not logged in");
-  }
+  };
 
   if (typeof id === "undefined") {
     errorMessages.push("No record specified");
-  }
+  };
 
   if (errorMessages.length == 0) {
     const query = `DELETE FROM faq WHERE id = ?`;
@@ -514,7 +531,7 @@ app.get("/FAQ/delete/:id", function (request, response) {
 
     db.run(query, values, function (error, faq) {
       const model = {
-        faq,
+        faq
       };
 
       if (error) {
@@ -523,16 +540,16 @@ app.get("/FAQ/delete/:id", function (request, response) {
         response.redirect("/faq_adminpage");
       } else {
         response.redirect("/faq_adminpage");
-      }
+      };
     });
   } else {
     const model = {
       errorMessages,
-      id,
+      id
     };
 
     response.render("faq_adminpage.hbs", model);
-  }
+  };
 });
 
 app.get("/faq_adminpage", function (request, response) {
@@ -544,12 +561,12 @@ app.get("/faq_adminpage", function (request, response) {
 
     if (error) {
       errorMessages.push("Internal server error");
-    }
+    };
 
     const model = {
       errorMessages,
       faq,
-      isLoggedIn,
+      isLoggedIn
     };
 
     response.render("faq_adminpage.hbs", model);
@@ -568,25 +585,32 @@ app.get("/logout", function (request, response) {
 app.post("/login", function (request, response) {
   const username = request.body.username;
   const password = request.body.password;
+  
+  //  Create new pwd hash 
+  //  const hashPWD=bcrypt.hashSync(password, SALTROUNDS);
+  //  console.log("hashPWD:",hashPWD);
 
-  if (username == ADMIN_USERNAME && password == ADMIN_PASSWORD) {
+  if (username == ADMIN_USERNAME && bcrypt.compareSync(password, ADMIN_PASSWORD)) {
     request.session.isLoggedIn = true;
 
     response.redirect("/");
   } else {
+    request.session.isLoggedIn = false;
+   
     const model = {
       failedToLogin: true,
+      isLoggedIn: false
     };
 
     response.render("login.hbs", model);
-  }
+  };
 });
 
 app.get("/adminpage", function (request, response) {
   const isLoggedIn = request.session.isLoggedIn;
 
   const model = {
-    isLoggedIn,
+    isLoggedIn
   };
 
   response.render("adminpage.hbs", model);

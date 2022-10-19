@@ -1,0 +1,46 @@
+<h1 class="header-large text-center">Hi admin.</h1>
+<h3 class="text-center">You rule this place now</h3>
+
+<a href="/create_project"><p>Want to add a new project?</p></a>
+
+<p>Want to update some projects?</p>
+
+{{#if errorMessages.length}}
+  <p>No projects available because:</p>
+  <ul>
+    {{#each errorMessages}}
+      <li>{{this}}</li>
+    {{/each}}
+  </ul>
+
+{{else}}
+
+  {{#if errorMessages.length}}
+    <p>Couldn't fetch the movies because:</p>
+    <ul>
+      {{#each errorMessages}}
+        <li>{{this}}</li>
+      {{/each}}
+    </ul>
+
+  {{/if}}
+  <div class="projects-container">
+    {{#if projects.length}}
+      <div>
+        {{#each projects}}
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title h5">{{name}}</div>
+              <div class="card-subtitle text-gray">{{description}}</div>
+            <a href="/projects/update/{{id}}" class="card-subtitle text-primary">Update</a>
+            <a href="/projects/delete/{{id}}" class="card-subtitle text-primary">Delete</a>
+          </div>
+
+        {{/each}}
+      </div>
+    {{else}}
+      <p>No projects can be showed right now</p>
+    {{/if}}
+  </div>
+{{/if}}
