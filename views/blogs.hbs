@@ -1,4 +1,4 @@
-<h1 class="header-large text-center">Check out some projects!</h1>
+<h1 class="header-large text-center">Check out the blog posts!</h1>
 
 {{#if errorMessages.length}}
   <p>No projects available because:</p>
@@ -11,7 +11,7 @@
 {{else}}
 
   {{#if errorMessages.length}}
-    <p>Couldn't fetch the movies because:</p>
+    <p>Couldn't fetch the blogs because:</p>
     <ul>
       {{#each errorMessages}}
         <li>{{this}}</li>
@@ -20,21 +20,23 @@
 
   {{/if}}
   <div class="projects-container">
-    {{#if projects.length}}
+    {{#if blogs.length}}
       <div>
-        {{#each projects}}
-          <a href="/project/{{id}}">
+        {{#each blogs}}
+          <a href="/blog/{{id}}">
             <div class="card">
               <div class="card-header">
-                <div class="card-title h5">{{name}}</div>
-                <div class="card-subtitle text-gray">{{description}}</div>
+                <div class="card-title h5">{{headline}}</div>
+                <div class="card-subtitle text-gray">{{body}}</div>
+                <div class="card-subtitle text-gray">{{craeted_date}}</div>
+                <div class="card-subtitle text-gray">{{updated_date}}</div>
               </div>
             </div>
           </a>
         {{/each}}
       </div>
     {{else}}
-      <p>No projects can be showed right now</p>
+      <p>No blog posts can be showed right now</p>
     {{/if}}
   </div>
 {{/if}}

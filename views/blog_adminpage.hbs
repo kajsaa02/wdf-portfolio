@@ -1,9 +1,9 @@
 <h1 class="header-large text-center">Hi admin.</h1>
 <h3 class="text-center">You rule this place now</h3>
 
-<a href="/create_project"><p>Want to add a new project?</p></a>
+<a href="/create_blog"><p>Want to add a new blog?</p></a>
 
-<p>Want to update some projects?</p>
+<p>Want to update some blogs?</p>
 
 {{#if errorMessages.length}}
   <p>No projects available because:</p>
@@ -16,31 +16,33 @@
 {{else}}
 
   {{#if errorMessages.length}}
-    <p>Couldn't fetch the movies because:</p>
+    <p>Couldn't fetch the blogs because:</p>
     <ul>
       {{#each errorMessages}}
         <li>{{this}}</li>
       {{/each}}
     </ul>
-
   {{/if}}
+
   <div class="projects-container">
-    {{#if projects.length}}
+    {{#if blogs.length}}
       <div>
-        {{#each projects}}
+        {{#each blogs}}
 
           <div class="card">
             <div class="card-header">
-              <div class="card-title h5">{{name}}</div>
-              <div class="card-subtitle text-gray">{{description}}</div>
-            <a href="/projects/update/{{id}}" class="card-subtitle text-primary">Update</a>
-            <a href="/projects/delete/{{id}}" class="card-subtitle text-primary">Delete</a>
+              <div class="card-title h5">{{headline}}</div>
+              <div class="card-subtitle text-gray">{{body}}</div>
+              <div class="card-subtitle text-gray">{{created_date}}</div>
+              <div class="card-subtitle text-gray">{{updated_date}}</div>
+            <a href="/blogs/update/{{id}}" class="card-subtitle text-primary">Update</a>
+            <a href="/blogs/delete/{{id}}" class="card-subtitle text-primary">Delete</a>
           </div>
 
         {{/each}}
       </div>
     {{else}}
-      <p>No projects can be showed right now</p>
+      <p>No blogs can be showed right now</p>
     {{/if}}
   </div>
 {{/if}}

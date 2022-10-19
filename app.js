@@ -68,6 +68,8 @@ app.get("/", function (request, response) {
   });
 });
 
+/*      project functions     */
+
 app.get("/projects", function (request, response) {
   const query = `SELECT * FROM Projects`;
   const isLoggedIn = request.session.isLoggedIn;
@@ -368,6 +370,8 @@ app.get("/project_adminpage", function (request, response) {
 });
 
 
+/*      faq functions     */
+
 app.get("/create_project", function (request, response) {
   response.render("create_project.hbs");
 });
@@ -572,6 +576,57 @@ app.get("/faq_adminpage", function (request, response) {
     response.render("faq_adminpage.hbs", model);
   });
 });
+
+
+
+/*      blog functions     */
+
+app.get("/blogs", function (request, response) {
+  const query = `SELECT * FROM Blog Order By updated_date`;
+  const isLoggedIn = request.session.isLoggedIn;
+
+  db.all(query, function (error, blogs) {
+    const errorMessages = [];
+
+    if (error) {
+      errorMessages.push("Internal server error");
+    }
+
+    const model = {
+      errorMessages,
+      blogs,
+      isLoggedIn
+    };
+
+    response.render("blogs.hbs", model);
+
+  });
+});
+
+
+app.get("/blog_adminpage", function (request, response) {
+  const projQuery = `SELECT * FROM blog ORDER BY id`;
+  const isLoggedIn = request.session.isLoggedIn;
+
+  db.all(projQuery, function (error, blogs) {
+    const errorMessages = [];
+
+    if (error) {
+      errorMessages.push("Internal server error");
+    }
+
+    const model = {
+      errorMessages,
+      blogs,
+      isLoggedIn
+    };
+    console.log("blogs:", blogs);
+    response.render("blog_adminpage.hbs", model);
+  });
+});
+
+
+/* Login/out functions     */
 
 app.get("/login", function (request, response) {
   response.render("login.hbs");
