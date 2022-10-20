@@ -1,6 +1,26 @@
-{{#if project}}
-  <h1 class="header-large text-center">{{project.name}}</h1>
-  <p>{{project.description_full}}</p>
+{{#if errorMessages.length}}
+  <p>Couldn't fetch the blogs because:</p>
+  <ul>
+    {{#each errorMessages}}
+      <li>{{this}}</li>
+    {{/each}}
+  </ul>
+{{/if}}
+
+{{#if blog}}
+  <h1 class="header-large text-center">{{blog.headline}}</h1>
+  <div class="projects-container">
+    <a href="/blog/{{id}}">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title h5">{{blog.headline}}</div>
+          <div class="card-subtitle text-gray">{{blog.body}}</div>
+          <div class="card-subtitle text-gray">{{blog.created_date}}</div>
+          <div class="card-subtitle text-gray">{{blog.updated_date}}</div>
+        </div>
+      </div>
+    </a>
+  </div>
 {{else}}
-  <h1 class="header-large text-center">That project does not exist.</h1>
+      <p>No blog posts can be showed right now</p>
 {{/if}}

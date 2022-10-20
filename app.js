@@ -117,7 +117,7 @@ app.get("/projects/create", function (request, response) {
    isLoggedIn
   };
 
-  response.render("create_project.hbs", model);
+  response.render("project_create.hbs", model);
 });
 
 app.post("/projects/create", function (request, response) {
@@ -185,7 +185,7 @@ app.post("/projects/create", function (request, response) {
           isLoggedIn
         };
 
-        response.render("create_project.hbs", model);
+        response.render("project_create.hbs", model);
       } else {
         response.redirect("/projects");
       };
@@ -200,7 +200,7 @@ app.post("/projects/create", function (request, response) {
       html_link,
       isLoggedIn
     };
-    response.render("create_project.hbs", model);
+    response.render("project_create.hbs", model);
   };
 });
 
@@ -217,7 +217,7 @@ app.get("/projects/update/:id", function (request, response) {
       isLoggedIn
     };
 
-    response.render("update_project.hbs", model);
+    response.render("project_update.hbs", model);
   });
 });
 
@@ -283,7 +283,7 @@ app.post("/projects/update/:id", function (request, response) {
           isLoggedIn
         };
 
-        response.render("update_project.hbs", model);
+        response.render("project_update.hbs", model);
       } else {
         response.redirect("/projects");
       };
@@ -298,7 +298,7 @@ app.post("/projects/update/:id", function (request, response) {
       id,
       isLoggedIn
     };
-    response.render("create_project.hbs", model);
+    response.render("project_create.hbs", model);
   };
 });
 
@@ -370,11 +370,12 @@ app.get("/project_adminpage", function (request, response) {
 });
 
 
-/*      faq functions     */
-
-app.get("/create_project", function (request, response) {
-  response.render("create_project.hbs");
+app.get("/project_create", function (request, response) {
+  response.render("project_create.hbs");
 });
+
+/*      faq function */ 
+
 
 app.get("/faq", function (request, response) {
   const query = `SELECT * FROM FAQ WHERE reply NOT NULL`;
@@ -399,7 +400,7 @@ app.get("/faq", function (request, response) {
 
 app.post("/faq", function (request, response) {
   const question = request.body.question;
-
+  const isLoggedIn = request.session.isLoggedIn;
   const errorMessages = [];
 
   if (question == "") {
@@ -410,6 +411,10 @@ app.post("/faq", function (request, response) {
     );
   };
 
+  if (!isLoggedIn) {
+    errorMessages.push("Not logged in");
+  }
+  
   if (errorMessages.length == 0) {
     const query = `INSERT INTO faq (question) VALUES (?)`;
     
@@ -456,7 +461,7 @@ app.get("/faq/update/:id", function (request, response) {
       isLoggedIn
     };
 
-      response.render("update_faq.hbs", model);
+      response.render("faq_update.hbs", model);
 
   });
 });
@@ -475,6 +480,10 @@ app.post("/faq/update/:id", function (request, response) {
     errorMessages.push(
       "Question may be at most " + ITEM_FAQ_MAX_LENGTH + " characters long"
     );
+  };
+
+  if (!isLoggedIn) {
+    errorMessages.push("Not logged in");
   };
 
   if (ITEM_FAQ_MAX_LENGTH < reply.length) {
@@ -500,7 +509,7 @@ app.post("/faq/update/:id", function (request, response) {
           isLoggedIn
         };
 
-        response.render("update_faq.hbs", model);
+        response.render("faq_update.hbs", model);
       } else {
         response.redirect("/faq_adminpage");
       };
@@ -513,7 +522,7 @@ app.post("/faq/update/:id", function (request, response) {
       id,
       isLoggedIn
     };
-    response.render("update_faq.hbs", model);
+    response.render("faq_update.hbs", model);
   };
 });
 
@@ -582,7 +591,7 @@ app.get("/faq_adminpage", function (request, response) {
 /*      blog functions     */
 
 app.get("/blogs", function (request, response) {
-  const query = `SELECT * FROM Blog Order By updated_date`;
+  const query = `SELECT * FROM Blog Order By updated_date DESC`;
   const isLoggedIn = request.session.isLoggedIn;
 
   db.all(query, function (error, blogs) {
@@ -591,7 +600,8 @@ app.get("/blogs", function (request, response) {
     if (error) {
       errorMessages.push("Internal server error");
     }
-
+    
+    
     const model = {
       errorMessages,
       blogs,
@@ -605,7 +615,7 @@ app.get("/blogs", function (request, response) {
 
 
 app.get("/blog_adminpage", function (request, response) {
-  const projQuery = `SELECT * FROM blog ORDER BY id`;
+  const projQuery = `SELECT * FROM blog ORDER BY created_date DESC`;
   const isLoggedIn = request.session.isLoggedIn;
 
   db.all(projQuery, function (error, blogs) {
@@ -620,7 +630,7 @@ app.get("/blog_adminpage", function (request, response) {
       blogs,
       isLoggedIn
     };
-    console.log("blogs:", blogs);
+    
     response.render("blog_adminpage.hbs", model);
   });
 });
@@ -712,9 +722,7 @@ app.get("/blog/update/:id", function (request, response) {
 
   db.get(query, values, function (error, blog) {
     
-    console.log(blog);
-
-    if (error) {
+      if (error) {
       errorMessages.push("Internal server error");
 
       const model = {
@@ -751,8 +759,6 @@ app.post("/blog/update/:id", function (request, response) {
 
   const errorMessages = [];
 
-  console.log("request.body",request.body);
-  
   if (headline == "") {
     errorMessages.push("headline can't be empty");
   } else if (ITEM_NAME_MAX_LENGTH < headline.length) {
@@ -766,6 +772,11 @@ app.post("/blog/update/:id", function (request, response) {
       "Blog post may be at most " + ITEM_DESCRIPTION_FULL_MAX_LENGTH + " characters long"
     );
   };
+
+  if (!isLoggedIn) {
+    errorMessages.push("Not logged in");
+  };
+
 
   if (errorMessages.length == 0) {
     const query = `UPDATE Blog SET headline =?, body = ? , updated_date =  datetime("now","localtime") WHERE id = ?`;
@@ -853,7 +864,36 @@ app.get("/blog/delete/:id", function (request, response) {
   };
 });
 
+app.get("/blog/:id", function (request, response) {
+  const id = request.params.id;
+  const isLoggedIn = request.session.isLoggedIn;
 
+  const query = `SELECT * FROM Blog WHERE id = ?`;
+  const values = [id];
+
+  db.get(query, values, function (error, blog) {
+
+    if (error) {
+      errorMessages.push("Internal server error");
+
+      const model = {
+        errorMessages,
+        id,
+        isLoggedIn
+      }
+      response.render("blog.hbs", model);
+      
+    } else {
+
+      const model = {
+        blog,
+        isLoggedIn
+      };
+
+      response.render("blog.hbs", model);
+    }
+  });
+});
 
 
 /* Login/out functions     */
