@@ -257,7 +257,7 @@ app.post("/projects/update/:id", function (request, response) {
     );
   };
 
-  if (ITEM_HTML_LINK_MAX_LENGTH < name.length) {
+  if (ITEM_HTML_LINK_MAX_LENGTH < html_link.length) {
     errorMessages.push(
       "Name may be at most " + ITEM_HTML_LINK_MAX_LENGTH + " characters long"
     );
@@ -624,6 +624,236 @@ app.get("/blog_adminpage", function (request, response) {
     response.render("blog_adminpage.hbs", model);
   });
 });
+
+app.get("/blog/create", function (request, response) {
+
+  const isLoggedIn = request.session.isLoggedIn;
+
+  const model = {
+   isLoggedIn
+  };
+
+  response.render("blog_create.hbs", model);
+});
+
+
+app.post("/blog/create", function (request, response) {
+  
+  const headline = request.body.headline;
+  const body = request.body.body;
+  const isLoggedIn = request.session.isLoggedIn;
+  
+  const errorMessages = [];
+
+  if (!isLoggedIn) {
+    errorMessages.push("Not logged in");
+  };
+
+  if (headline == "") {
+    errorMessages.push("Name can't be empty");
+  } else if (ITEM_NAME_MAX_LENGTH < headline.length) {
+    errorMessages.push(
+      "Headline " + ITEM_NAME_MAX_LENGTH + " characters long"
+    );
+  };
+
+  if (ITEM_DESCRIPTION_FULL_MAX_LENGTH < body.length) {
+    errorMessages.push(
+      "Blog post may be at most " +
+        ITEM_DESCRIPTION_FULL_MAX_LENGTH +
+        " characters long"
+    );
+  };
+
+  if (errorMessages.length == 0) {
+    //const query = `INSERT INTO Blog (headline, body, created_date, updated_date) VALUES (?, ?, ?, ?)`;
+    const query = `INSERT INTO Blog (headline, body, created_date, updated_date) VALUES (?, ?, datetime("now","localtime"), datetime("now","localtime")) `;
+    
+    const values = [headline, body];
+
+    db.run(query, values, function (error) {
+      
+      if (error) {
+        errorMessages.push("Internal server error");
+
+        const model = {
+          errorMessages,
+          headline,
+          body,
+          isLoggedIn
+        };
+
+        response.render("blogs_create.hbs", model);
+      } else {
+        response.redirect("/blog_adminpage");
+      };
+    });
+  } else {
+
+    const model = {
+      errorMessages,
+      headline,
+      body,
+      isLoggedIn
+    };
+
+    response.render("blogs_create.hbs", model);
+  };
+});
+
+
+app.get("/blog/update/:id", function (request, response) {
+  const id = request.params.id;
+  const isLoggedIn = request.session.isLoggedIn;
+  const errorMessages =[];
+
+  const query = `SELECT * FROM Blog WHERE id = ?`;
+  const values = [id];
+
+  db.get(query, values, function (error, blog) {
+    
+    console.log(blog);
+
+    if (error) {
+      errorMessages.push("Internal server error");
+
+      const model = {
+        errorMessages,
+        id,
+        isLoggedIn
+      };
+
+      response.render("blog_update.hbs", model);
+
+    } else {
+
+      const model = {
+        errorMessages,
+        id,
+        blog,
+        isLoggedIn
+      };
+ 
+      response.render("blog_update.hbs", model);
+
+    };
+  });  
+});
+
+app.post("/blog/update/:id", function (request, response) {
+  const headline = request.body.headline;
+  const body = request.body.body;
+  const create_date = request.body.create_date;
+  const updated_date = request.body.updated_date;
+  
+  const id = request.params.id;
+  const isLoggedIn = request.session.isLoggedIn;
+
+  const errorMessages = [];
+
+  console.log("request.body",request.body);
+  
+  if (headline == "") {
+    errorMessages.push("headline can't be empty");
+  } else if (ITEM_NAME_MAX_LENGTH < headline.length) {
+    errorMessages.push(
+      "Headline may be at most " + ITEM_NAME_MAX_LENGTH + " characters long"
+    );
+  };
+
+  if (ITEM_DESCRIPTION_FULL_MAX_LENGTH < body.length) {
+    errorMessages.push(
+      "Blog post may be at most " + ITEM_DESCRIPTION_FULL_MAX_LENGTH + " characters long"
+    );
+  };
+
+  if (errorMessages.length == 0) {
+    const query = `UPDATE Blog SET headline =?, body = ? , updated_date =  datetime("now","localtime") WHERE id = ?`;
+
+    const values = [headline, body, id];
+
+    db.run(query, values, function (error) {
+      if (error) {
+        errorMessages.push("Internal server error");
+
+        const model = {
+          errorMessages,
+          headline,
+          body,
+          create_date,
+          updated_date,
+          id,
+          isLoggedIn
+        };
+
+        response.render("blog_update.hbs", model);
+
+      } else {
+        response.redirect("/blog_adminpage");
+      };
+
+    });
+  } else {
+
+      const model = {
+        errorMessages,
+        headline,
+        body,
+        create_date,
+        updated_date,
+        id,
+        isLoggedIn
+      };
+          
+      response.render("blog_update.hbs", model);
+
+  };
+});
+
+app.get("/blog/delete/:id", function (request, response) {
+  const id = request.params.id;
+  const errorMessages = [];
+
+  if (!request.session.isLoggedIn) {
+    errorMessages.push("Not logged in");
+  };
+
+  if (typeof id === "undefined") {
+    errorMessages.push("No record specified");
+  };
+
+  if (errorMessages.length == 0) {
+    const query = `DELETE FROM blog WHERE id = ?`;
+    const values = [id];
+
+    db.run(query, values, function (error) {
+      
+      if (error) {
+        errorMessages.push("Internal server error");
+
+        const model = {
+          errorMessages,
+          id
+        };
+ 
+        response.render("blog_adminpage.hbs", model);
+
+      } else {
+        response.redirect("/blog_adminpage");
+      };
+
+    });
+  } else {
+    const model = {
+      errorMessages,
+      id
+    };
+
+    response.render("blog_adminpage.hbs", model);
+  };
+});
+
+
 
 
 /* Login/out functions     */

@@ -1,0 +1,26 @@
+<h1>Create Blog Post </h1>
+
+{{#if errorMessages.length}}
+  <p>Couldn't create Blog post due to:</p>
+  <ul>
+    {{#each errorMessages}}
+      <li>{{this}}</li>
+    {{/each}}
+  </ul>
+{{/if}}
+
+<form action="/blog/create" method="post">
+
+  <div>
+    Blog headline:
+    <input type="text" name="headline" value="{{headline}}" />
+  </div>
+
+  <div>
+    Blog post:
+    <input type="text" name="body" value="{{body}}" />
+  </div>
+
+  <input type="submit" value="Create now" />
+
+</form>

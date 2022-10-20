@@ -1,7 +1,7 @@
 <h1 class="header-large text-center">Hi admin.</h1>
 <h3 class="text-center">You rule this place now</h3>
 
-<a href="/create_blog"><p>Want to add a new blog?</p></a>
+<a href="/blog/create"><p>Want to add a new blog?</p></a>
 
 <p>Want to update some blogs?</p>
 
@@ -35,8 +35,8 @@
               <div class="card-subtitle text-gray">{{body}}</div>
               <div class="card-subtitle text-gray">{{created_date}}</div>
               <div class="card-subtitle text-gray">{{updated_date}}</div>
-            <a href="/blogs/update/{{id}}" class="card-subtitle text-primary">Update</a>
-            <a href="/blogs/delete/{{id}}" class="card-subtitle text-primary">Delete</a>
+            <a href="/blog/update/{{id}}" class="card-subtitle text-primary">Update</a>
+            <a href="/blog/delete/{{id}}" class="card-subtitle text-primary">Delete</a>
           </div>
 
         {{/each}}
