@@ -1,6 +1,24 @@
+{{#if errorMessages.length}}
+  <p>Couldn't fetch the project because:</p>
+  <ul>
+    {{#each errorMessages}}
+      <li>{{this}}</li>
+    {{/each}}
+  </ul>
+{{/if}}
+
 {{#if project}}
   <h1 class="header-large text-center">{{project.name}}</h1>
-  <p>{{project.description_full}}</p>
+  <div class="projects-container">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title h5">{{project.name}}</div>
+          <div class="card-subtitle text-gray">{{project.description}}</div>
+          <div class="card-subtitle text-gray">{{project.description_full}}</div>
+          <div class="card-subtitle text-gray">{{project.html_link}}</div>
+        </div>
+      </div>
+  </div>
 {{else}}
-  <h1 class="header-large text-center">That project does not exist.</h1>
+      <p> Requesed project cannot be found</p>
 {{/if}}

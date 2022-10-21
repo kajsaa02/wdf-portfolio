@@ -17,6 +17,7 @@
 	<p>Project name {{project.name}}</p>
     <p>Project Descrption </p>
     <p>{{project.description}}</p>
+	<p>{{project.html_link}}</p>
 
 <h1>*************************************************</h1>
 
@@ -32,6 +33,10 @@
 
     <div>
 		Description full: <input type="text" name="description_full" value="{{project.description_full}}">
+	</div>
+
+	<div>
+		HTML link: <input type="text" name="html_link" value="{{project.html_link}}">
 	</div>
 	
 	<input type="submit" value="update now">

@@ -10,17 +10,15 @@
 {{#if blog}}
   <h1 class="header-large text-center">{{blog.headline}}</h1>
   <div class="projects-container">
-    <a href="/blog/{{id}}">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title h5">{{blog.headline}}</div>
-          <div class="card-subtitle text-gray">{{blog.body}}</div>
-          <div class="card-subtitle text-gray">{{blog.created_date}}</div>
-          <div class="card-subtitle text-gray">{{blog.updated_date}}</div>
-        </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title h5">{{blog.headline}}</div>
+        <div class="card-subtitle text-gray">{{blog.body}}</div>
+        <div class="card-subtitle text-gray">{{blog.created_date}}</div>
+        <div class="card-subtitle text-gray">{{blog.updated_date}}</div>
       </div>
-    </a>
+    </div>
   </div>
 {{else}}
-      <p>No blog posts can be showed right now</p>
+      <p>The requested blog posts can not be found</p>
 {{/if}}
