@@ -13,8 +13,8 @@ const ITEM_FAQ_MAX_LENGTH = 500;
 const ITEM_BLOG_MAX_LENGTH = 2000;
 
 const ADMIN_USERNAME = "Kajsa";
-//const ADMIN_PASSWORD = "PappaÄrBäst";
-const ADMIN_PASSWORD = "$2b$10$atcpMY0PZF17BI4Yr9ZJteOU7qsGAXU4k52.wupsUbsh9YRgBUfje"
+//const ADMIN_PASSWORD = "Rochester";
+const ADMIN_PASSWORD = "$2b$10$pPgE.AvkEQtRWgzqGoKFf.ctNfdMwjCKQYAlvy72l2fGY3j72GWjS"
 
 const db = new sqlite3.Database("wdf_portfolio.db");
 
@@ -33,7 +33,7 @@ app.engine(
 app.use(
   express.urlencoded({
     extended: false
-  })
+  })  
 );
 
 
@@ -79,7 +79,7 @@ app.get("/", function (request, response) {
 });
 
 
-/*      project functions     */
+/*      project functions      */
 
 app.get("/projects", function (request, response) {
   const isLoggedIn = request.session.isLoggedIn;
@@ -1054,9 +1054,9 @@ app.post("/login", function (request, response) {
   const password = request.body.password;
   
   //  Create new pwd hash 
-  //  const SALTROUNDS = 10; 
-  //  const hashPWD=bcrypt.hashSync(password, SALTROUNDS);
-  //  console.log("hashPWD:",hashPWD);
+  //const SALTROUNDS = 10; 
+  //const hashPWD=bcrypt.hashSync(password, SALTROUNDS);
+  //console.log("hashPWD:",hashPWD);
 
   if (username == ADMIN_USERNAME && bcrypt.compareSync(password, ADMIN_PASSWORD)) {
     request.session.isLoggedIn = true;
