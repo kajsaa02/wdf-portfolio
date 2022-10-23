@@ -79,7 +79,7 @@ app.get("/", function (request, response) {
 });
 
 
-/*      project functions     */
+/*      project functions      */
 
 app.get("/projects", function (request, response) {
   const isLoggedIn = request.session.isLoggedIn;
