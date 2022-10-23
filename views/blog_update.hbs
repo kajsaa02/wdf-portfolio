@@ -10,17 +10,7 @@
 {{/if}}
 
 
-<h1>*************************************************</h1>
-
 {{#if blog}}
-	<p>Blog id  {{blog.id}}</p>
-	<p>Headline {{blog.headline}}</p>
-	<p>Created  {{blog.created_date}}</p>
-	<p>Updated  {{blog.updated_date}}</p>
-	<p>Blog post</p>
-	<p>{{blog.body}}</p>
-    
-<h1>*************************************************</h1>
 
 <form action="/blog/update/{{blog.id}}" method="post">
 	
@@ -29,8 +19,7 @@
 	</div>
 	
 	<div>
-		<p>Blog post</p>
-		<input type="text" name="body" value="{{blog.body}}">
+		Blog post: <input type="text" name="body" value="{{blog.body}}">
 	</div>
     
 	<input type="submit" value="update now">

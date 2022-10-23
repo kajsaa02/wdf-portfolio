@@ -9,16 +9,7 @@
 	</ul>
 {{/if}}
 
-
-<h1>*************************************************</h1>
-
 {{#if faq}}
-	<p>FAQ ID {{faq.id}}</p>
-	<p>Question{{faq.question}}</p>
-    <p>Reply{{faq.reply}}</p>
-
-
-<h1>*************************************************</h1>
 
 <form action="/faq/update/{{faq.id}}" method="post">
 	
@@ -35,8 +26,7 @@
 	</div>
 	
 	<input type="submit" value="update now">
-
-	<button onclick="history.back()" value="Cancel">Cancel</button>
+	
 		
 </form>
 

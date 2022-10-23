@@ -10,16 +10,8 @@
 {{/if}}
 
 
-<h1>*************************************************</h1>
 
 {{#if project}}
-	<p>Project ID {{project.id}}</p>
-	<p>Project name {{project.name}}</p>
-    <p>Project Descrption </p>
-    <p>{{project.description}}</p>
-	<p>{{project.html_link}}</p>
-
-<h1>*************************************************</h1>
 
 <form action="/projects/update/{{project.id}}" method="post">
 	

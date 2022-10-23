@@ -1023,6 +1023,19 @@ app.get("/blog/:id", function (request, response) {
   });
 });
 
+/*    Contact page   */
+
+app.get("/contact", function (request, response) {
+  const isLoggedIn = request.session.isLoggedIn;
+
+  const model = {
+    isLoggedIn
+  };
+
+  response.render("contact.hbs", model);
+
+});
+
 
 
 /* Login/out functions     */
