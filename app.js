@@ -300,7 +300,7 @@ app.post("/projects/update/:id", function (request, response) {
     );
   };
 
-  if (ITEM_DESCRIPTION_MAX_LENGTH < description_full.length) {
+  if (ITEM_DESCRIPTION_FULL_MAX_LENGTH < description_full.length) {
     errorMessages.push("Full Description may be at most " +
         ITEM_DESCRIPTION_FULL_MAX_LENGTH +
         " characters long"
@@ -336,7 +336,7 @@ app.post("/projects/update/:id", function (request, response) {
 
       } else {
 
-        response.redirect("/projects");
+        response.redirect("/projects/adminpage");
 
       };
     });
@@ -353,7 +353,7 @@ app.post("/projects/update/:id", function (request, response) {
       isLoggedIn
     };
 
-    response.render("project_create.hbs", model);
+    response.render("project_update.hbs", model);
 
   };
 });
